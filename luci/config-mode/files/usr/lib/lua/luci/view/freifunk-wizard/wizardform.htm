@@ -31,59 +31,60 @@
   <div class="actions">
   
   <script type="text/javascript">
-		passwordInput1 = document.getElementById("cbid.password.1.pw1");
-		passwordInput2 = document.getElementById("cbid.password.1.pw2");
-		reason1 = document.getElementById("reason1");
-		reason2 = document.getElementById("reason2");
+	var passwordInput1 = document.getElementById("cbid.password.1.pw1");
+	var passwordInput2 = document.getElementById("cbid.password.1.pw2");
+	var reason1 = document.getElementById("reason1");
+	var reason2 = document.getElementById("reason2");
+
+        var passwordOK = false;
         
         if(passwordInput1 == null || passwordInput2 == null){
-            passwordOK = true;
-        }else{
-            passwordOK = false;
-        }
-		
-		midred = "#FF3A00"; //mittleres Rot
-		green = "#009900"; 
+            var passwordOK = true;
+       	}
+       	
+	var midred = "#FF3A00"; //mittleres Rot
+	var green = "#009900"; 
 		        
-		function check() {
-            passwordOK = true;
+	function check() {
+        	passwordOK = true;
             
-			if(passwordInput1.value.length == 0){
-                reason1.innerHTML = "";
-                passwordOK = false;
-			}else{
-				strength = new PasswordStrength();
-				strength.password = passwordInput1.value;
+		if(passwordInput1.value.length == 0){
+               		reason1.innerHTML = "";
+               		passwordOK = false;
+		}else{
+			strength = new PasswordStrength();
+			strength.password = passwordInput1.value;
 		                
-                if(! strength.test_length()){
-                    reason1.style.color = midred;
-                    passwordOK = false;
-                }else if(! strength.test_components()){
-                    reason1.style.color = midred;
-                    passwordOK = false;
-                }else{
-                    reason1.style.color = green;
-                }
-                
-                reason1.innerHTML = strength.status;
-			}
-			equal();
+               		if(! strength.test_length()){
+               		    reason1.style.color = midred;
+               		    passwordOK = false;
+               		}else if(! strength.test_components()){
+               		    reason1.style.color = midred;
+               		    passwordOK = false;
+               		}else{
+               		    reason1.style.color = green;
+               		}
+               	
+               		reason1.innerHTML = strength.status;
 		}
-		function equal(){
-			if (passwordInput2.value.length == 0) {
-				passwordInput2.style.background = defaultColor;
-				reason2.innerHTML = "";
-                return false;
-			} else if (passwordInput1.value === passwordInput2.value) {
-				reason2.innerHTML = "Die Passwörter stimmen überein.";
-                reason2.style.color = green;
-                return true;
-			} else {
-				reason2.innerHTML = "Die Passwörter stimmen nicht überein.";
-				reason2.style.color = midred;
-                return false;
-			}
+		equal();
+	}
+		
+	function equal(){
+		if (passwordInput2.value.length == 0) {
+			passwordInput2.style.background = defaultColor;
+			reason2.innerHTML = "";
+               		return false;
+		} else if (passwordInput1.value === passwordInput2.value) {
+			reason2.innerHTML = "Die Passwörter stimmen überein.";
+               		reason2.style.color = green;
+               		return true;
+		} else {
+			reason2.innerHTML = "Die Passwörter stimmen nicht überein.";
+			reason2.style.color = midred;
+               		return false;
 		}
+	}
         
         function Orly(){
             if(!passwordOK){
