@@ -33,46 +33,75 @@
   <script type="text/javascript">
 	var passwordInput1 = document.getElementById("cbid.password.1.pw1");
 	var passwordInput2 = document.getElementById("cbid.password.1.pw2");
-	var reason1 = document.getElementById("reason1");
-	var reason2 = document.getElementById("reason2");
-
-        var passwordOK = false;
-        
-        if(passwordInput1 == null || passwordInput2 == null){
-            var passwordOK = true;
-       	}
-       	
-	var midred = "#FF3A00"; //mittleres Rot
+    var reason1;
+    var reason2;
+    
+    var midred = "#FF3A00";
+    var yellow = "#E68A2E";
 	var green = "#009900"; 
+	
+    var passwordOK = false;
+
+    if(passwordInput1 == null || passwordInput2 == null){
+        passwordOK = true;
+    }else{    
+        //Erstelle labels fuer Passwortinformationen        
+        reason1 = document.getElementById("reason1");
+        
+        if(reason1 === null){
+            var div = document.createElement("label");
+            var id = document.createAttribute("id");
+            id.value="reason1";
+            div.setAttributeNode(id);
+            
+            document.getElementById("cbi-password-1-pw1").lastChild.appendChild(div);
+            reason1 = document.getElementById("reason1");			
+        }
+	
+        reason2 = document.getElementById("reason2");
+	
+        if(reason2 === null){
+            var div = document.createElement("label");
+            var id = document.createAttribute("id");
+            id.value="reason2";
+            div.setAttributeNode(id);
+            
+            document.getElementById("cbi-password-1-pw2").lastChild.appendChild(div);
+            reason2 = document.getElementById("reason2");			
+        }
+        
+        //ueberpruefe alle 250ms auf Passwortaenderungen
+        window.setInterval("check()", 250); 
+    }
 		        
 	function check() {
-        	passwordOK = true;
+        passwordOK = true;
             
 		if(passwordInput1.value.length == 0){
-               		reason1.innerHTML = "";
-               		passwordOK = false;
+       		reason1.innerHTML = "";
+       		passwordOK = false;
 		}else{
 			strength = new PasswordStrength();
 			strength.password = passwordInput1.value;
 		                
-               		if(! strength.test_length()){
-               		    reason1.style.color = midred;
-               		    passwordOK = false;
-               		}else if(! strength.test_components()){
-               		    reason1.style.color = midred;
-               		    passwordOK = false;
-               		}else{
-               		    reason1.style.color = green;
-               		}
-               	
-               		reason1.innerHTML = strength.status;
+       		if(! strength.test_length()){
+       		    reason1.style.color = midred;
+       		    passwordOK = false;
+       		}else if(! strength.test_components()){
+       		    reason1.style.color = yellow;
+       		    passwordOK = false;
+       		}else{
+       		    reason1.style.color = green;
+       		}
+       	
+       		reason1.innerHTML = strength.status;
 		}
-		equal();
+		passwordsEqual();
 	}
 		
-	function equal(){
+	function passwordsEqual(){
 		if (passwordInput2.value.length == 0) {
-			passwordInput2.style.background = defaultColor;
+			passwordInput2.style.background = "";
 			reason2.innerHTML = "";
                		return false;
 		} else if (passwordInput1.value === passwordInput2.value) {
@@ -86,21 +115,57 @@
 		}
 	}
         
-        function Orly(){
-            if(!passwordOK){
-                if(! confirm("Das gewälte Passwort wird als nicht Sicher angesehen.\n Trozdem Absenden?") ){
-                    return false;
-                }
+    function Orly(){
+        if(!passwordOK){
+            if(! confirm("Das gewälte Passwort entspricht nicht den Anforderungen.\nTrotzdem Absenden?") ){
+                return false;
             }
-            if(!equal()){
-                alert("Es wurde kein Passwort gesetzt, oder die Passwörter stimmen nicht überein.");
+        }
+        if(!equal()){
+            alert("Es wurde kein Passwort gesetzt, oder die Passwörter stimmen nicht überein.");
+            return false;
+        }
+        return true;
+    }
+        
+    var PasswordStrength = function() {
+        var UPPERCASE_LOWERCASE_RE = /([a-z].*[A-Z])|([A-Z].*[a-z])/;
+        var SYMBOL_RE = /[!@#\$%^&*?\._\-+\*~=\/\\\(\){}\[\]<>:,;\"§\|]/;
+
+        var min_password_length = 10
+
+        this.status = null
+        this.password = null
+
+        this.test_length = function() {
+            if(this.password.length < min_password_length){
+                this.status = "Das Passwort sollte mindestens 10 Zeichen haben.";
                 return false;
             }
             return true;
-        }
-        
-        window.setInterval("check()", 250)
-        
+        };
+
+        this.test_components = function() {
+            if(!this.password.match(/[0-9]/)){
+                this.status = "Es sollte mindestens eine Zahl im Passwort vorkommen.";
+                return false;
+            }
+    
+            if(!this.password.match(UPPERCASE_LOWERCASE_RE)){
+                this.status = "Bitte verwende große und kleine Buchstaben";
+                return false;
+            }
+    
+            if(!this.password.match(SYMBOL_RE)){
+                this.status = "Bitte verwende mindestens ein Sonderzeichen";
+                return false;
+            }
+    
+            this.status = "Das Passwort ist Akzeptabel."
+            return true;
+        };
+    };
+       
 	</script>
 <% if redirect then %>
   <div style="float:left">
